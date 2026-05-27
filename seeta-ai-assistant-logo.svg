@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <!-- Background gradient: deep space blue to indigo -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0c29"/>
+      <stop offset="50%" style="stop-color:#1a1a4e"/>
+      <stop offset="100%" style="stop-color:#24243e"/>
+    </linearGradient>
+
+    <!-- Golem glow: purple-magenta -->
+    <radialGradient id="golemGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:0.4"/>
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0"/>
+    </radialGradient>
+
+    <!-- Orb gradient: teal to cyan -->
+    <radialGradient id="orb" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" style="stop-color:#67e8f9"/>
+      <stop offset="60%" style="stop-color:#06b6d4"/>
+      <stop offset="100%" style="stop-color:#0369a1"/>
+    </radialGradient>
+
+    <!-- S letter gradient -->
+    <linearGradient id="sGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0f9ff"/>
+      <stop offset="100%" style="stop-color:#bae6fd"/>
+    </linearGradient>
+
+    <!-- Subtle pulse ring filter -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="400" rx="40" fill="url(#bg)"/>
+
+  <!-- Golem ambient glow -->
+  <circle cx="200" cy="200" r="200" fill="url(#golemGlow)"/>
+
+  <!-- Outer decorative ring (Golem purple) -->
+  <circle cx="200" cy="200" r="175" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="8 6" opacity="0.5"/>
+
+  <!-- Orbit ring (Telegram blue) -->
+  <circle cx="200" cy="200" r="152" fill="none" stroke="#0ea5e9" stroke-width="1" stroke-dasharray="4 10" opacity="0.35"/>
+
+  <!-- Small orbit dots -->
+  <circle cx="200" cy="48" r="5" fill="#7c3aed" opacity="0.8" filter="url(#glow)"/>
+  <circle cx="352" cy="200" r="4" fill="#0ea5e9" opacity="0.7" filter="url(#glow)"/>
+  <circle cx="200" cy="352" r="5" fill="#7c3aed" opacity="0.8" filter="url(#glow)"/>
+  <circle cx="48"  cy="200" r="4" fill="#0ea5e9" opacity="0.7" filter="url(#glow)"/>
+
+  <!-- Main AI orb -->
+  <circle cx="200" cy="185" r="105" fill="url(#orb)" filter="url(#softGlow)"/>
+
+  <!-- Inner orb sheen -->
+  <ellipse cx="175" cy="155" rx="38" ry="24" fill="white" opacity="0.18"/>
+
+  <!-- "S" letterform — bold, centered -->
+  <text x="200" y="222" font-family="'Georgia', 'Times New Roman', serif"
+        font-size="120" font-weight="bold" text-anchor="middle"
+        fill="url(#sGrad)" opacity="0.95" filter="url(#glow)">S</text>
+
+  <!-- Circuit / node lines emanating from orb -->
+  <!-- Top-left node -->
+  <line x1="134" y1="120" x2="94" y2="88" stroke="#06b6d4" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="94" cy="88" r="4" fill="#06b6d4" opacity="0.7"/>
+  <line x1="94" y1="88" x2="72" y2="88" stroke="#06b6d4" stroke-width="1.5" opacity="0.4"/>
+  <circle cx="72" cy="88" r="2.5" fill="#06b6d4" opacity="0.6"/>
+
+  <!-- Top-right node -->
+  <line x1="265" y1="118" x2="305" y2="86" stroke="#7c3aed" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="305" cy="86" r="4" fill="#7c3aed" opacity="0.7"/>
+  <line x1="305" y1="86" x2="328" y2="86" stroke="#7c3aed" stroke-width="1.5" opacity="0.4"/>
+  <circle cx="328" cy="86" r="2.5" fill="#7c3aed" opacity="0.6"/>
+
+  <!-- Bottom-left node -->
+  <line x1="130" y1="250" x2="92" y2="285" stroke="#0ea5e9" stroke-width="1.5" opacity="0.45"/>
+  <circle cx="92" cy="285" r="4" fill="#0ea5e9" opacity="0.7"/>
+  <line x1="92" y1="285" x2="68" y2="285" stroke="#0ea5e9" stroke-width="1.5" opacity="0.35"/>
+  <circle cx="68" cy="285" r="2.5" fill="#0ea5e9" opacity="0.5"/>
+
+  <!-- Bottom-right node -->
+  <line x1="268" y1="248" x2="308" y2="282" stroke="#7c3aed" stroke-width="1.5" opacity="0.45"/>
+  <circle cx="308" cy="282" r="4" fill="#7c3aed" opacity="0.6"/>
+  <line x1="308" y1="282" x2="332" y2="282" stroke="#7c3aed" stroke-width="1.5" opacity="0.35"/>
+  <circle cx="332" cy="282" r="2.5" fill="#7c3aed" opacity="0.5"/>
+
+  <!-- Chat bubble (Telegram symbol) bottom-right of orb -->
+  <g transform="translate(263, 248)" opacity="0.9">
+    <rect x="0" y="0" width="44" height="32" rx="10" fill="#0ea5e9" filter="url(#glow)"/>
+    <polygon points="6,32 14,32 6,44" fill="#0ea5e9"/>
+    <!-- Bubble lines -->
+    <line x1="8" y1="10" x2="36" y2="10" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+    <line x1="8" y1="18" x2="28" y2="18" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.65"/>
+  </g>
+
+  <!-- Golem "G" badge bottom-left of orb -->
+  <g transform="translate(88, 244)" opacity="0.9">
+    <circle cx="22" cy="22" r="22" fill="#7c3aed" filter="url(#glow)"/>
+    <text x="22" y="29" font-family="'Arial', sans-serif" font-size="22" font-weight="bold"
+          text-anchor="middle" fill="white">G</text>
+  </g>
+
+  <!-- App name -->
+  <text x="200" y="322" font-family="'Arial', 'Helvetica', sans-serif"
+        font-size="28" font-weight="700" text-anchor="middle" letter-spacing="3"
+        fill="#e0f2fe">SEETA</text>
+
+  <!-- Tagline -->
+  <text x="200" y="350" font-family="'Arial', 'Helvetica', sans-serif"
+        font-size="12" font-weight="400" text-anchor="middle" letter-spacing="2.5"
+        fill="#7dd3fc" opacity="0.8">AI ASSISTANT · GOLEM</text>
+</svg>
