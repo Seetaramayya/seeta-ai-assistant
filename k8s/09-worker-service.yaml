@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golem-worker-service
+  namespace: golem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: golem-worker-service
+  template:
+    metadata:
+      labels:
+        app: golem-worker-service
+    spec:
+      containers:
+      - name: worker-service
+        image: golemservices/golem-worker-service:v1.5.2
+        env:
+        - name: RUST_BACKTRACE
+          value: "1"
+        - name: RUST_LOG
+          value: "info,h2=warn,hyper=warn,tower=warn"
+        - name: GOLEM__ENVIRONMENT
+          value: local
+        - name: GOLEM__BLOB_STORAGE__TYPE
+          value: LocalFileSystem
+        - name: GOLEM__BLOB_STORAGE__CONFIG__ROOT
+          value: /blob_storage
+        - name: GOLEM__CUSTOM_REQUEST_PORT
+          value: "9006"
+        - name: GOLEM__MCP_PORT
+          value: "9007"
+        - name: GOLEM__PORT
+          value: "9005"
+        - name: GOLEM__GRPC__PORT
+          value: "9094"
+        - name: GOLEM__GATEWAY_SESSION_STORAGE__TYPE
+          value: Redis
+        - name: GOLEM__GATEWAY_SESSION_STORAGE__CONFIG__HOST
+          value: redis
+        - name: GOLEM__GATEWAY_SESSION_STORAGE__CONFIG__PORT
+          value: "6379"
+        - name: GOLEM__REGISTRY_SERVICE__HOST
+          value: golem-registry-service
+        - name: GOLEM__REGISTRY_SERVICE__PORT
+          value: "9008"
+        - name: GOLEM__SHARD_MANAGER__HOST
+          value: golem-shard-manager
+        - name: GOLEM__SHARD_MANAGER__PORT
+          value: "9002"
+        ports:
+        - name: http
+          containerPort: 9005
+        - name: api-gateway
+          containerPort: 9006
+        - name: mcp
+          containerPort: 9007
+        - name: grpc
+          containerPort: 9094
+        volumeMounts:
+        - name: blob-storage
+          mountPath: /blob_storage
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 200m
+          limits:
+            memory: 2Gi
+      volumes:
+      - name: blob-storage
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: golem-worker-service
+  namespace: golem
+spec:
+  selector:
+    app: golem-worker-service
+  ports:
+  - name: http
+    port: 9005
+    targetPort: 9005
+  - name: api-gateway
+    port: 9006
+    targetPort: 9006
+  - name: mcp
+    port: 9007
+    targetPort: 9007
+  - name: grpc
+    port: 9094
+    targetPort: 9094

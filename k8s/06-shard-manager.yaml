@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golem-shard-manager
+  namespace: golem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: golem-shard-manager
+  template:
+    metadata:
+      labels:
+        app: golem-shard-manager
+    spec:
+      containers:
+      - name: shard-manager
+        image: golemservices/golem-shard-manager:v1.5.2
+        env:
+        - name: RUST_BACKTRACE
+          value: "1"
+        - name: RUST_LOG
+          value: "info,h2=warn,hyper=warn,tower=warn"
+        - name: GOLEM__ENVIRONMENT
+          value: local
+        - name: GOLEM__HTTP_PORT
+          value: "8081"
+        - name: GOLEM__GRPC__PORT
+          value: "9002"
+        - name: GOLEM__REGISTRY_SERVICE__HOST
+          value: golem-registry-service
+        - name: GOLEM__REGISTRY_SERVICE__PORT
+          value: "9008"
+        - name: GOLEM__DB__TYPE
+          value: Postgres
+        - name: GOLEM__DB__CONFIG__DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: database
+        - name: GOLEM__DB__CONFIG__SCHEMA
+          value: golem_shard_manager
+        - name: GOLEM__DB__CONFIG__MAX_CONNECTIONS
+          value: "10"
+        - name: GOLEM__DB__CONFIG__HOST
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: host
+        - name: GOLEM__DB__CONFIG__PORT
+          value: "5432"
+        - name: GOLEM__DB__CONFIG__USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: username
+        - name: GOLEM__DB__CONFIG__PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: password
+        ports:
+        - name: http
+          containerPort: 8081
+        - name: grpc
+          containerPort: 9002
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 100m
+          limits:
+            memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: golem-shard-manager
+  namespace: golem
+spec:
+  selector:
+    app: golem-shard-manager
+  ports:
+  - name: http
+    port: 8081
+    targetPort: 8081
+  - name: grpc
+    port: 9002
+    targetPort: 9002

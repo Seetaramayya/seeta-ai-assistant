@@ -1,0 +1,65 @@
+# Schema for IDEA:
+# $schema: https://schema.golem.cloud/app/golem/1.5.0/golem.schema.json
+# Schema for vscode-yaml:
+# yaml-language-server: $schema=https://schema.golem.cloud/app/golem/1.5.0/golem.schema.json
+
+manifestVersion: 1.5.0
+
+app: seeta-ai-assistant
+
+environments:
+  local:
+    server: local
+    componentPresets: debug
+  cloud:
+    server: cloud
+    componentPresets: release
+  self-hosted:
+    server:
+      url: https://golem.vadali.in
+      auth:
+        staticToken: "{{ GOLEM_STATIC_TOKEN }}"
+    componentPresets: release
+components:
+  seeta-ai-assistant:app:
+    dir: ""
+    templates: scala
+    env:
+      TELEGRAM_BOT_KEY: "{{ TELEGRAM_BOT_KEY }}"
+      GEMINI_API_KEY: "{{ GEMINI_API_KEY }}"
+      EMAILJS_SERVICE_ID: "{{ EMAILJS_SERVICE_ID }}"
+      EMAILJS_TEMPLATE_ID: "{{ EMAILJS_TEMPLATE_ID }}"
+      EMAILJS_PUBLIC_KEY: "{{ EMAILJS_PUBLIC_KEY }}"
+      EMAILJS_PRIVATE_KEY: "{{ EMAILJS_PRIVATE_KEY }}"
+      TAVILY_API_KEY: "{{ TAVILY_API_KEY }}"
+      CALENDAR_ICS_1: "{{ CALENDAR_ICS_1 }}"
+      CALENDAR_ICS_2: "{{ CALENDAR_ICS_2 }}"
+      CALENDAR_ICS_3: "{{ CALENDAR_ICS_3 }}"
+      OWNER_TELEGRAM_ID: "{{ OWNER_TELEGRAM_ID }}"
+      WEBHOOK_BASE_URL: "{{ WEBHOOK_BASE_URL }}"
+httpApi:
+  deployments:
+    local:
+    - domain: seeta-ai-assistant.localhost:9006
+      agents:
+        TelegramAgent: {}
+        UserAgent: {}
+        DirectoryAgent: {}
+        DirectoryShardAgent: {}
+        MetricsAgent: {}
+    cloud:
+    - domain: seeta-ai-assistant.apps.golem.cloud
+      agents:
+        TelegramAgent: {}
+        UserAgent: {}
+        DirectoryAgent: {}
+        DirectoryShardAgent: {}
+        MetricsAgent: {}
+    self-hosted:
+    - domain: golem-api.vadali.in
+      agents:
+        TelegramAgent: {}
+        UserAgent: {}
+        DirectoryAgent: {}
+        DirectoryShardAgent: {}
+        MetricsAgent: {}

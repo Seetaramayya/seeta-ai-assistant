@@ -1,0 +1,23 @@
+{
+  "ok": true,
+  "result": [
+    {
+      "update_id": 222222222,
+      "message": {
+        "message_id": 3,
+        "from": {
+          "id": 444555666,
+          "is_bot": false,
+          "first_name": "Carol",
+          "username": "carol_tg"
+        },
+        "chat": {
+          "id": 444555666,
+          "type": "private"
+        },
+        "date": 1716000020,
+        "sticker": {}
+      }
+    }
+  ]
+}

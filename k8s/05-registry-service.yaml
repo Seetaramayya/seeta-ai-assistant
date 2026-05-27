@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golem-registry-service
+  namespace: golem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: golem-registry-service
+  template:
+    metadata:
+      labels:
+        app: golem-registry-service
+    spec:
+      containers:
+      - name: registry-service
+        image: golemservices/registry-service:v1.5.2
+        env:
+        - name: GOLEM_ENVIRONMENT
+          value: local
+        - name: RUST_BACKTRACE
+          value: "1"
+        - name: RUST_LOG
+          value: "info,h2=warn,hyper=warn,tower=warn"
+        - name: GOLEM__HTTP_PORT
+          value: "8083"
+        - name: GOLEM__GRPC__PORT
+          value: "9008"
+        - name: GOLEM__CORS_ORIGIN_REGEX
+          value: ".*"
+        - name: GOLEM__INITIAL_ACCOUNTS__ROOT__TOKEN
+          value: "n0AstqJ6cBgh9ob2BBT_h39t7B00I-8wSnBBix2lo-I"
+        - name: GOLEM__INITIAL_ACCOUNTS__MARKETING__TOKEN
+          value: "evJ-8NPn7hIPBJ-htGgfZkk36PeA-UGAmT2iKasTFM4"
+        - name: GOLEM__LOGIN__TYPE
+          value: Disabled
+        - name: GOLEM__DB__TYPE
+          value: Postgres
+        - name: GOLEM__DB__CONFIG__DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: database
+        - name: GOLEM__DB__CONFIG__SCHEMA
+          value: golem_registry_service
+        - name: GOLEM__DB__CONFIG__MAX_CONNECTIONS
+          value: "10"
+        - name: GOLEM__DB__CONFIG__HOST
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: host
+        - name: GOLEM__DB__CONFIG__PORT
+          value: "5432"
+        - name: GOLEM__DB__CONFIG__USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: username
+        - name: GOLEM__DB__CONFIG__PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: password
+        - name: GOLEM__COMPILATION__CONFIG__HOST
+          value: golem-component-compilation-service
+        - name: GOLEM__COMPILATION__CONFIG__PORT
+          value: "9010"
+        ports:
+        - name: http
+          containerPort: 8083
+        - name: grpc
+          containerPort: 9008
+        readinessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 8083
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 12
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 100m
+          limits:
+            memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: golem-registry-service
+  namespace: golem
+spec:
+  selector:
+    app: golem-registry-service
+  ports:
+  - name: http
+    port: 8083
+    targetPort: 8083
+  - name: grpc
+    port: 9008
+    targetPort: 9008

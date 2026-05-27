@@ -1,0 +1,41 @@
+{
+  "ok": true,
+  "result": [
+    {
+      "update_id": 300,
+      "message": {
+        "message_id": 10,
+        "from": {
+          "id": 1001,
+          "is_bot": false,
+          "first_name": "Dave",
+          "username": "dave"
+        },
+        "chat": {
+          "id": 1001,
+          "type": "private"
+        },
+        "date": 1716000030,
+        "text": "First"
+      }
+    },
+    {
+      "update_id": 301,
+      "message": {
+        "message_id": 11,
+        "from": {
+          "id": 1002,
+          "is_bot": false,
+          "first_name": "Eve",
+          "username": "eve"
+        },
+        "chat": {
+          "id": 1002,
+          "type": "private"
+        },
+        "date": 1716000040,
+        "text": "Second"
+      }
+    }
+  ]
+}

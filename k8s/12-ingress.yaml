@@ -1,0 +1,58 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: golem-api
+  namespace: golem
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "1g"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: YOUR_INGRESS_CLASS
+  tls:
+  - hosts:
+    - golem.YOUR_DOMAIN
+    secretName: golem-tls
+  rules:
+  - host: golem.YOUR_DOMAIN
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: golem-router
+            port:
+              number: 80
+---
+# golem-api.YOUR_DOMAIN — Agent HTTP API gateway (agent endpoints like /users/{id}/message)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: golem-agent-api
+  namespace: golem
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: YOUR_INGRESS_CLASS
+  tls:
+  - hosts:
+    - golem-api.YOUR_DOMAIN
+    secretName: golem-api-tls
+  rules:
+  - host: golem-api.YOUR_DOMAIN
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: golem-worker-service
+            port:
+              number: 9006

@@ -1,0 +1,23 @@
+{
+  "ok": true,
+  "result": [
+    {
+      "update_id": 111111111,
+      "message": {
+        "message_id": 2,
+        "from": {
+          "id": 111222333,
+          "is_bot": false,
+          "first_name": "Bob"
+        },
+        "chat": {
+          "id": 111222333,
+          "first_name": "Bob",
+          "type": "private"
+        },
+        "date": 1716000010,
+        "text": "Hi there"
+      }
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golem-component-compilation-service
+  namespace: golem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: golem-component-compilation-service
+  template:
+    metadata:
+      labels:
+        app: golem-component-compilation-service
+    spec:
+      containers:
+      - name: compilation-service
+        image: golemservices/golem-component-compilation-service:v1.5.2
+        env:
+        - name: RUST_BACKTRACE
+          value: "1"
+        - name: RUST_LOG
+          value: "info,h2=warn,hyper=warn,tower=warn"
+        - name: GOLEM__BLOB_STORAGE__TYPE
+          value: LocalFileSystem
+        - name: GOLEM__BLOB_STORAGE__CONFIG__ROOT
+          value: /blob_storage
+        - name: GOLEM__HTTP_PORT
+          value: "8084"
+        - name: GOLEM__GRPC__PORT
+          value: "9010"
+        - name: GOLEM__REGISTRY_SERVICE__TYPE
+          value: Static
+        - name: GOLEM__REGISTRY_SERVICE__CONFIG__HOST
+          value: golem-registry-service
+        - name: GOLEM__REGISTRY_SERVICE__CONFIG__PORT
+          value: "9008"
+        ports:
+        - name: http
+          containerPort: 8084
+        - name: grpc
+          containerPort: 9010
+        volumeMounts:
+        - name: blob-storage
+          mountPath: /blob_storage
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 200m
+          limits:
+            memory: 2Gi
+      volumes:
+      - name: blob-storage
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: golem-component-compilation-service
+  namespace: golem
+spec:
+  selector:
+    app: golem-component-compilation-service
+  ports:
+  - name: http
+    port: 8084
+    targetPort: 8084
+  - name: grpc
+    port: 9010
+    targetPort: 9010

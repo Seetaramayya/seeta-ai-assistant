@@ -1,0 +1,165 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golem-debugging-service
+  namespace: golem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: golem-debugging-service
+  template:
+    metadata:
+      labels:
+        app: golem-debugging-service
+    spec:
+      containers:
+      - name: debugging-service
+        image: golemservices/golem-debugging-service:v1.5.2
+        env:
+        - name: WASMTIME_BACKTRACE_DETAILS
+          value: "1"
+        - name: RUST_BACKTRACE
+          value: "1"
+        - name: RUST_LOG
+          value: info
+        - name: GOLEM__BLOB_STORAGE__TYPE
+          value: S3
+        - name: GOLEM__BLOB_STORAGE__CONFIG__REGION
+          value: eu-west-1
+        - name: GOLEM__BLOB_STORAGE__CONFIG__OBJECT_PREFIX
+          value: golem/
+        - name: GOLEM__BLOB_STORAGE__CONFIG__COMPILATION_CACHE_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: blob-bucket
+        - name: GOLEM__BLOB_STORAGE__CONFIG__CUSTOM_DATA_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: blob-bucket
+        - name: GOLEM__BLOB_STORAGE__CONFIG__OPLOG_PAYLOAD_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: blob-bucket
+        - name: GOLEM__BLOB_STORAGE__CONFIG__COMPRESSED_OPLOG_BUCKETS
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: blob-bucket-json
+        - name: GOLEM__BLOB_STORAGE__CONFIG__INITIAL_AGENT_FILES_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: blob-bucket
+        - name: GOLEM__BLOB_STORAGE__CONFIG__COMPONENTS_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: blob-bucket
+        - name: GOLEM__BLOB_STORAGE__CONFIG__RETRIES__MAX_ATTEMPTS
+          value: "3"
+        - name: GOLEM__BLOB_STORAGE__CONFIG__RETRIES__MIN_DELAY
+          value: 100ms
+        - name: GOLEM__BLOB_STORAGE__CONFIG__RETRIES__MAX_DELAY
+          value: 2s
+        - name: GOLEM__BLOB_STORAGE__CONFIG__RETRIES__MULTIPLIER
+          value: "2"
+        - name: GOLEM__COMPILED_COMPONENT_SERVICE__TYPE
+          value: Enabled
+        - name: GOLEM__HTTP_PORT
+          value: "8086"
+        - name: GOLEM__KEY_VALUE_STORAGE__TYPE
+          value: Postgres
+        - name: GOLEM__KEY_VALUE_STORAGE__CONFIG__DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: database
+        - name: GOLEM__KEY_VALUE_STORAGE__CONFIG__SCHEMA
+          value: golem_worker_executor
+        - name: GOLEM__KEY_VALUE_STORAGE__CONFIG__MAX_CONNECTIONS
+          value: "10"
+        - name: GOLEM__KEY_VALUE_STORAGE__CONFIG__HOST
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: host
+        - name: GOLEM__KEY_VALUE_STORAGE__CONFIG__PORT
+          value: "5432"
+        - name: GOLEM__KEY_VALUE_STORAGE__CONFIG__USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: username
+        - name: GOLEM__KEY_VALUE_STORAGE__CONFIG__PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: password
+        - name: GOLEM__INDEXED_STORAGE__TYPE
+          value: Postgres
+        - name: GOLEM__INDEXED_STORAGE__CONFIG__DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: database
+        - name: GOLEM__INDEXED_STORAGE__CONFIG__SCHEMA
+          value: golem_worker_executor_indexed
+        - name: GOLEM__INDEXED_STORAGE__CONFIG__MAX_CONNECTIONS
+          value: "10"
+        - name: GOLEM__INDEXED_STORAGE__CONFIG__HOST
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: host
+        - name: GOLEM__INDEXED_STORAGE__CONFIG__PORT
+          value: "5432"
+        - name: GOLEM__INDEXED_STORAGE__CONFIG__USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: username
+        - name: GOLEM__INDEXED_STORAGE__CONFIG__PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: golem-rds
+              key: password
+        - name: GOLEM__REGISTRY_SERVICE__HOST
+          value: golem-registry-service
+        - name: GOLEM__REGISTRY_SERVICE__PORT
+          value: "9008"
+        - name: GOLEM__PUBLIC_WORKER_API__HOST
+          value: golem-worker-service
+        - name: GOLEM__PUBLIC_WORKER_API__PORT
+          value: "9094"
+        volumeMounts:
+        - name: scheduler-data
+          mountPath: /data
+        ports:
+        - name: http
+          containerPort: 8086
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 100m
+          limits:
+            memory: 2Gi
+      volumes:
+      - name: scheduler-data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: golem-debugging-service
+  namespace: golem
+spec:
+  selector:
+    app: golem-debugging-service
+  ports:
+  - name: http
+    port: 8086
+    targetPort: 8086

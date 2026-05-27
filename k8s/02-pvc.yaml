@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-data
+  namespace: golem
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: gp2
+  resources:
+    requests:
+      storage: 10Gi
+---
+# blob-storage is shared between worker-executor, compilation-service,
+# worker-service, and debugging-service. All four are pinned to the same
+# node via podAffinity so a single ReadWriteOnce PVC works fine.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: blob-storage
+  namespace: golem
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: gp2
+  resources:
+    requests:
+      storage: 20Gi
