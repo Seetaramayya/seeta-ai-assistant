@@ -78,44 +78,8 @@ Each child can split recursively when it also hits 1,000 entries, so total capac
 
 ## Environment Variables
 
-Create a `.env` file in the project root:
+Give correct details in `.env` file which is located in the root directory of the project.
 
-```bash
-# Telegram
-TELEGRAM_BOT_KEY=<your Telegram bot token from @BotFather>
-OWNER_TELEGRAM_ID=<your Telegram user ID — the owner's agent gets extra privileges>
-
-# This is a static token to deploy to Golem AWS K8S cluster (self-hosted)
-GOLEM_STATIC_TOKEN=""
-
-# Google Gemini, I am happy to provide my own API key for testing in case if you are facing difficulties
-GEMINI_API_KEY=<Gemini API key from Google AI Studio>
-# Default model is: gemini-3.1-flash-lite
-GEMINI_MODEL_NAME=gemini-3.1-flash-lite
-
-# EmailJS (for sending emails, for hackathon purposes only)
-EMAILJS_PUBLIC_KEY="EMAILJS_PUBLIC_KEY_REDACTED"
-EMAILJS_PRIVATE_KEY="EMAILJS_PRIVATE_KEY_REDACTED"
-EMAILJS_SERVICE_ID="EMAILJS_SERVICE_ID_REDACTED"
-EMAILJS_TEMPLATE_ID="EMAILJS_TEMPLATE_ID_REDACTED"
-
-# Tavily (web search, for hackathon purposes only)
-TAVILY_API_KEY="TAVILY_API_KEY_REDACTED"
-
-# iCal calendar feeds (up to 3; set unused ones to empty string, this can be tested in golem cloud, I have provided my person calendar ICS link)
-CALENDAR_ICS_1=<iCal URL, e.g. Google Calendar private ICS link>
-CALENDAR_ICS_2=
-CALENDAR_ICS_3=
-
-# Deployment to AWS K8S cluster (self-hosted)
-BLOB_STORAGE_BUCKET="<bucket-name>"
-BLOB_STORAGE_BUCKET_JSON='["<bucket-name>"]'
-RDS_HOST="<RDS_HOST_NAME>"
-RDS_PORT="5432"
-RDS_DB_NAME="golem"
-RDS_USERNAME="golem"
-RDS_PASSWORD="<database name>"
-```
 
 ### EmailJS template
 
@@ -239,12 +203,12 @@ kubectl scale deployment -n golem --replicas=0 \
 
 The bot supports multiple independent users. Each gets their own persistent agent.
 
-### User 1 — Owner (Seeta)
+### User 1 — Owner
 
 Open [@golemclaw_seeta_bot](https://t.me/golemclaw_seeta_bot) as the owner account and send these messages one by one:
 
 ```
-Remember that I am Seeta, I live in Hilversum. My email address is "seeta@vadali.in"
+Remember that I am Seeta, I live in Hilversum. My email address is "your@email.com"
 ```
 
 > Bot stores name, city (auto-infers CET timezone), and registers email in the shared directory.
@@ -292,14 +256,14 @@ Remind me everyday at 9 AM weather and top 5 news items
 > Schedules a recurring daily briefing at 09:00 CET.
 
 ```
-Register my email address is "seeta@vadali.in"
+Register my email address is "your@email.com"
 ```
 
 > Publishes display name "Seeta Ramayya" + email to the global directory so other users can reach Seeta by name.
 
 ---
 
-### User 2 — Another user (Swetha)
+### User 2 — Another user
 
 Open the same bot from a **different Telegram account**:
 
